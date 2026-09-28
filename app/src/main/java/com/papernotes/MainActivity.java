@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateUtils;
@@ -31,6 +32,7 @@ public class MainActivity extends Activity {
     private NoteAdapter adapter;
     private TextView emptyView;
     private TextView folderView;
+    private Typeface noteTypeface = Typeface.SERIF;
 
     private static final class Note {
         File file;
@@ -81,6 +83,7 @@ public class MainActivity extends Activity {
     }
 
     private void reload() {
+        noteTypeface = Fonts.load(Prefs.font(this));
         notes.clear();
         String untitled = getString(R.string.untitled);
         for (File f : NoteStore.listNotes(this)) {
@@ -159,12 +162,15 @@ public class MainActivity extends Activity {
             View v = convertView != null ? convertView
                     : LayoutInflater.from(MainActivity.this).inflate(R.layout.item_note, parent, false);
             Note note = getItem(position);
-            ((TextView) v.findViewById(R.id.title)).setText(note.title);
+            TextView title = (TextView) v.findViewById(R.id.title);
+            title.setText(note.title);
+            title.setTypeface(noteTypeface);
             ((TextView) v.findViewById(R.id.date)).setText(DateUtils.getRelativeTimeSpanString(
                     note.file.lastModified(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_RELATIVE));
             TextView preview = (TextView) v.findViewById(R.id.preview);
             preview.setText(note.preview);
+            preview.setTypeface(noteTypeface);
             preview.setVisibility(note.preview.length() > 0 ? View.VISIBLE : View.GONE);
             return v;
         }

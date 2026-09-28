@@ -7,14 +7,21 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 public class EditorActivity extends Activity {
 
@@ -24,6 +31,9 @@ public class EditorActivity extends Activity {
     private EditText body;
     private TextView footer;
     private TextView dateView;
+    private View appearancePanel;
+    private TextView sizeLabel;
+    private TextView typefaceButton;
     private String savedText = "";
     private boolean deleted;
 
@@ -36,6 +46,10 @@ public class EditorActivity extends Activity {
         body = (EditText) findViewById(R.id.body);
         footer = (TextView) findViewById(R.id.footer);
         dateView = (TextView) findViewById(R.id.date);
+        appearancePanel = findViewById(R.id.appearance_panel);
+        sizeLabel = (TextView) findViewById(R.id.size_label);
+        typefaceButton = (TextView) findViewById(R.id.typeface);
+        applyAppearance();
 
         if (file.exists()) {
             try {
@@ -80,6 +94,113 @@ public class EditorActivity extends Activity {
                 confirmDelete();
             }
         });
+        findViewById(R.id.appearance).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean showing = appearancePanel.getVisibility() == View.VISIBLE;
+                appearancePanel.setVisibility(showing ? View.GONE : View.VISIBLE);
+            }
+        });
+        findViewById(R.id.smaller).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeTextSize(-1);
+            }
+        });
+        findViewById(R.id.larger).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeTextSize(1);
+            }
+        });
+        typefaceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTypefacePicker();
+            }
+        });
+    }
+
+    private void applyAppearance() {
+        String font = Prefs.font(this);
+        float size = Prefs.textSize(this);
+        body.setTypeface(Fonts.load(font));
+        body.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+        sizeLabel.setText(String.valueOf(Math.round(size)));
+        typefaceButton.setText(Fonts.nameOf(this, font) + " ▾");
+        typefaceButton.setTypeface(Fonts.load(font));
+    }
+
+    private void changeTextSize(int deltaSp) {
+        Prefs.setTextSize(this, Prefs.textSize(this) + deltaSp);
+        applyAppearance();
+    }
+
+    private void showTypefacePicker() {
+        final List<Fonts.Font> fonts = Fonts.available(this);
+        final String current = Prefs.font(this);
+
+        ListView list = new ListView(this);
+        list.setCacheColorHint(0);
+        TextView hint = new TextView(this);
+        int pad = Math.round(16 * getResources().getDisplayMetrics().density);
+        hint.setPadding(pad + pad / 2, pad, pad + pad / 2, pad);
+        hint.setTextColor(getResources().getColor(R.color.ink_soft));
+        hint.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        hint.setText(getString(R.string.fonts_hint, Fonts.userFontsDir(this).getAbsolutePath()));
+        list.addFooterView(hint, null, false);
+
+        list.setAdapter(new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return fonts.size();
+            }
+
+            @Override
+            public Fonts.Font getItem(int position) {
+                return fonts.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                TextView row = (TextView) (convertView != null ? convertView
+                        : LayoutInflater.from(EditorActivity.this).inflate(R.layout.item_font, parent, false));
+                Fonts.Font font = getItem(position);
+                boolean selected = font.key.equals(current);
+                row.setText(selected ? font.name + "  ✓" : font.name);
+                row.setTextColor(getResources().getColor(selected ? R.color.accent : R.color.ink));
+                row.setTypeface(Fonts.load(font.key));
+                return row;
+            }
+        });
+
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.typeface)
+                .setView(list)
+                .setNegativeButton(R.string.cancel, null)
+                .create();
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position < fonts.size()) {
+                    Prefs.setFont(EditorActivity.this, fonts.get(position).key);
+                    applyAppearance();
+                }
+                dialog.dismiss();
+            }
+        });
+        for (int i = 0; i < fonts.size(); i++) {
+            if (fonts.get(i).key.equals(current)) {
+                list.setSelection(i);
+                break;
+            }
+        }
+        dialog.show();
     }
 
     @Override

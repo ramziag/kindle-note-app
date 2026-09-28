@@ -13,4 +13,12 @@
     <string name="untitled">Untitled</string>
     <string name="saved_to">Saved in %1$s</string>
     <string name="save_failed">Could not save note: %1$s</string>
+    <string name="appearance">Aa</string>
+    <string name="smaller_text">Smaller text</string>
+    <string name="larger_text">Larger text</string>
+    <string name="typeface">Typeface</string>
+    <string name="font_serif">Serif (default)</string>
+    <string name="font_sans">Sans serif</string>
+    <string name="font_mono">Monospace</string>
+    <string name="fonts_hint">To add your own fonts, copy .ttf or .otf files into %1$s</string>
 </resources>

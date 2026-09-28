@@ -30,9 +30,67 @@
             android:typeface="serif" />
 
         <TextView
+            android:id="@+id/appearance"
+            style="@style/TopBarButton"
+            android:text="@string/appearance" />
+
+        <TextView
             android:id="@+id/delete"
             style="@style/TopBarButton"
             android:text="@string/delete" />
+    </LinearLayout>
+
+    <!-- Typeface and text size controls, shown by the "Aa" button. -->
+    <LinearLayout
+        android:id="@+id/appearance_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/appearance_panel"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/smaller"
+            style="@style/TopBarButton"
+            android:contentDescription="@string/smaller_text"
+            android:text="A−"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/size_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="36dp"
+            android:textColor="@color/ink_soft"
+            android:textSize="16sp"
+            android:typeface="serif" />
+
+        <TextView
+            android:id="@+id/larger"
+            style="@style/TopBarButton"
+            android:contentDescription="@string/larger_text"
+            android:text="A+"
+            android:textSize="24sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="28dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@color/rule" />
+
+        <TextView
+            android:id="@+id/typeface"
+            style="@style/TopBarButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/ink" />
     </LinearLayout>
 
     <ScrollView

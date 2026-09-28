@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tablets such as the Kindle Fire HDX 7" / 8.9": wider, book-like margins. -->
+<resources>
+    <dimen name="page_margin">48dp</dimen>
+    <dimen name="page_margin_wide">64dp</dimen>
+    <dimen name="body_text">21sp</dimen>
+</resources>

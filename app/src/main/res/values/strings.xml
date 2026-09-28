@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Paper Notes</string>
+    <string name="notebook_title">Notebook</string>
+    <string name="new_note">+ New note</string>
+    <string name="empty_notes">No notes yet.\n\nTap “+ New note” to begin your first page.</string>
+    <string name="back">‹ Notes</string>
+    <string name="delete">Delete</string>
+    <string name="write_hint">Begin writing…</string>
+    <string name="delete_title">Delete this note?</string>
+    <string name="delete_message">“%1$s” will be removed from your device.</string>
+    <string name="cancel">Cancel</string>
+    <string name="untitled">Untitled</string>
+    <string name="saved_to">Saved in %1$s</string>
+    <string name="save_failed">Could not save note: %1$s</string>
+</resources>

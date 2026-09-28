@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="paper">#F5EDD8</color>
+    <color name="paper_edge">#E9DDBF</color>
+    <color name="paper_card">#FAF4E4</color>
+    <color name="ink">#3A2E26</color>
+    <color name="ink_soft">#7A6A58</color>
+    <color name="ink_faint">#B3A389</color>
+    <color name="accent">#8B3A2B</color>
+    <color name="rule">#D8C8A6</color>
+    <color name="pressed">#1F8B6F47</color>
+    <color name="selection">#4D8B3A2B</color>
+</resources>

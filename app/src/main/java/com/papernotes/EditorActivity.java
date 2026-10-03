@@ -8,13 +8,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,7 +77,9 @@ public class EditorActivity extends Activity {
             }
         });
 
-        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
+        TextView back = (TextView) findViewById(R.id.back);
+        back.setText(getString(R.string.back_to, NoteStore.folderName(this, file.getParentFile())));
+        back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -140,67 +137,40 @@ public class EditorActivity extends Activity {
         final List<Fonts.Font> fonts = Fonts.available(this);
         final String current = Prefs.font(this);
 
-        ListView list = new ListView(this);
-        list.setCacheColorHint(0);
         TextView hint = new TextView(this);
         int pad = Math.round(16 * getResources().getDisplayMetrics().density);
         hint.setPadding(pad + pad / 2, pad, pad + pad / 2, pad);
         hint.setTextColor(getResources().getColor(R.color.ink_soft));
         hint.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         hint.setText(getString(R.string.fonts_hint, Fonts.userFontsDir(this).getAbsolutePath()));
-        list.addFooterView(hint, null, false);
 
-        list.setAdapter(new BaseAdapter() {
+        int selected = 0;
+        for (int i = 0; i < fonts.size(); i++) {
+            if (fonts.get(i).key.equals(current)) {
+                selected = i;
+            }
+        }
+        ChoiceDialog.show(this, getString(R.string.typeface), hint, selected, new ChoiceDialog.Rows() {
             @Override
-            public int getCount() {
+            public int count() {
                 return fonts.size();
             }
 
             @Override
-            public Fonts.Font getItem(int position) {
-                return fonts.get(position);
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return position;
-            }
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                TextView row = (TextView) (convertView != null ? convertView
-                        : LayoutInflater.from(EditorActivity.this).inflate(R.layout.item_font, parent, false));
-                Fonts.Font font = getItem(position);
-                boolean selected = font.key.equals(current);
-                row.setText(selected ? font.name + "  ✓" : font.name);
-                row.setTextColor(getResources().getColor(selected ? R.color.accent : R.color.ink));
+            public void bind(TextView row, int position) {
+                Fonts.Font font = fonts.get(position);
+                boolean chosen = font.key.equals(current);
+                row.setText(chosen ? font.name + "  ✓" : font.name);
+                row.setTextColor(getResources().getColor(chosen ? R.color.accent : R.color.ink));
                 row.setTypeface(Fonts.load(font.key));
-                return row;
             }
-        });
 
-        final AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.typeface)
-                .setView(list)
-                .setNegativeButton(R.string.cancel, null)
-                .create();
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position < fonts.size()) {
-                    Prefs.setFont(EditorActivity.this, fonts.get(position).key);
-                    applyAppearance();
-                }
-                dialog.dismiss();
+            public void onChosen(int position) {
+                Prefs.setFont(EditorActivity.this, fonts.get(position).key);
+                applyAppearance();
             }
         });
-        for (int i = 0; i < fonts.size(); i++) {
-            if (fonts.get(i).key.equals(current)) {
-                list.setSelection(i);
-                break;
-            }
-        }
-        dialog.show();
     }
 
     @Override

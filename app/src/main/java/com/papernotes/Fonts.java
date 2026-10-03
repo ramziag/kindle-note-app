@@ -69,7 +69,7 @@ final class Fonts {
 
     /** Where the user can drop extra fonts; created so it's easy to find over USB. */
     static File userFontsDir(Context context) {
-        File dir = new File(NoteStore.getNotesDir(context), "Fonts");
+        File dir = new File(NoteStore.getNotesDir(context), NoteStore.FONTS_FOLDER);
         dir.mkdirs();
         return dir;
     }

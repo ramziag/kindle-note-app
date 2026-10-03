@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Paper Notes</string>
-    <string name="notebook_title">Notebook</string>
+    <string name="root_title">Notes</string>
     <string name="new_note">+ New note</string>
-    <string name="empty_notes">No notes yet.\n\nTap “+ New note” to begin your first page.</string>
-    <string name="back">‹ Notes</string>
+    <string name="new_notebook">+ Notebook</string>
+    <string name="empty_notes">No notes yet.\n\nTap “+ New note” to begin your first page, or “+ Notebook” to start a notebook.</string>
+    <string name="empty_notebook">This notebook is empty.\n\nTap “+ New note” to begin a page here, or long-press a note elsewhere and choose “Move to…”.</string>
+    <string name="back_to">‹ %1$s</string>
     <string name="delete">Delete</string>
     <string name="write_hint">Begin writing…</string>
     <string name="delete_title">Delete this note?</string>
@@ -21,4 +23,32 @@
     <string name="font_sans">Sans serif</string>
     <string name="font_mono">Monospace</string>
     <string name="fonts_hint">To add your own fonts, copy .ttf or .otf files into %1$s</string>
+
+    <string name="notebook_empty">Empty</string>
+    <plurals name="note_count">
+        <item quantity="one">%d note</item>
+        <item quantity="other">%d notes</item>
+    </plurals>
+    <plurals name="notebook_count">
+        <item quantity="one">%d notebook</item>
+        <item quantity="other">%d notebooks</item>
+    </plurals>
+    <string name="new_notebook_title">New notebook</string>
+    <string name="rename_notebook_title">Rename notebook</string>
+    <string name="notebook_name_hint">Notebook name</string>
+    <string name="create">Create</string>
+    <string name="rename">Rename</string>
+    <string name="new_notebook_choice">+ New notebook…</string>
+    <string name="move_to">Move to…</string>
+    <string name="move_title">Move “%1$s” to</string>
+    <string name="move_failed">Couldn’t move that note</string>
+    <string name="delete_notebook_title">Delete this notebook?</string>
+    <string name="delete_notebook_message">“%1$s” and everything in it will be removed from your device.</string>
+    <string name="delete_notebook_message_count">“%1$s” and everything in it, including %2$s, will be removed from your device.</string>
+    <string name="delete_notebook_failed">Some of “%1$s” couldn’t be deleted</string>
+    <string name="name_empty">Give the notebook a name</string>
+    <string name="name_invalid">A name can’t contain / \\ : * ? \" &lt; > | or start or end with a dot</string>
+    <string name="name_reserved">“Fonts” is kept for your own fonts; choose another name</string>
+    <string name="name_taken">There’s already a notebook or file with that name here</string>
+    <string name="name_failed">That didn’t work; try another name</string>
 </resources>

@@ -4,4 +4,5 @@
     <dimen name="page_margin">32dp</dimen>
     <dimen name="page_margin_wide">44dp</dimen>
     <dimen name="body_text">21sp</dimen>
+    <dimen name="back_max_width">240dp</dimen>
 </resources>

@@ -13,10 +13,13 @@
         android:paddingRight="8dp"
         android:paddingTop="6dp">
 
+        <!-- Labelled in code with the notebook the note belongs to. -->
         <TextView
             android:id="@+id/back"
             style="@style/TopBarButton"
-            android:text="@string/back" />
+            android:ellipsize="end"
+            android:maxWidth="@dimen/back_max_width"
+            android:singleLine="true" />
 
         <TextView
             android:id="@+id/date"

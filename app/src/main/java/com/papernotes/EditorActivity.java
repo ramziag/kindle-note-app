@@ -3,13 +3,15 @@ package com.papernotes;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.EditText;
+import android.view.ViewTreeObserver;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,12 +25,17 @@ public class EditorActivity extends Activity {
     public static final String EXTRA_PATH = "path";
 
     private File file;
-    private EditText body;
+    private PagedEditText body;
+    private ScrollView scroll;
     private TextView footer;
     private TextView dateView;
     private View appearancePanel;
     private TextView sizeLabel;
     private TextView typefaceButton;
+    private TextView[] spacingButtons;
+    private TextView pagesButton;
+    private TextView scrollButton;
+    private String wordCount = "";
     private String savedText = "";
     private boolean deleted;
 
@@ -38,12 +45,19 @@ public class EditorActivity extends Activity {
         setContentView(R.layout.activity_editor);
 
         file = new File(getIntent().getStringExtra(EXTRA_PATH));
-        body = (EditText) findViewById(R.id.body);
+        body = (PagedEditText) findViewById(R.id.body);
+        scroll = (ScrollView) findViewById(R.id.scroll);
         footer = (TextView) findViewById(R.id.footer);
         dateView = (TextView) findViewById(R.id.date);
         appearancePanel = findViewById(R.id.appearance_panel);
         sizeLabel = (TextView) findViewById(R.id.size_label);
         typefaceButton = (TextView) findViewById(R.id.typeface);
+        spacingButtons = new TextView[] {
+            (TextView) findViewById(R.id.spacing_compact), (TextView) findViewById(R.id.spacing_normal),
+            (TextView) findViewById(R.id.spacing_relaxed), (TextView) findViewById(R.id.spacing_wide),
+        };
+        pagesButton = (TextView) findViewById(R.id.view_pages);
+        scrollButton = (TextView) findViewById(R.id.view_scroll);
         applyAppearance();
 
         if (file.exists()) {
@@ -54,7 +68,7 @@ public class EditorActivity extends Activity {
             }
         }
         body.setText(savedText);
-        updateFooter();
+        updateWordCount();
         updateDate(file.exists() ? file.lastModified() : System.currentTimeMillis());
 
         if (savedText.length() == 0) {
@@ -73,6 +87,12 @@ public class EditorActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                updateWordCount();
+            }
+        });
+        scroll.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
                 updateFooter();
             }
         });
@@ -116,16 +136,66 @@ public class EditorActivity extends Activity {
                 showTypefacePicker();
             }
         });
+        for (int i = 0; i < spacingButtons.length; i++) {
+            final float spacing = Prefs.LINE_SPACINGS[i];
+            spacingButtons[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Prefs.setLineSpacing(EditorActivity.this, spacing);
+                    applyAppearance();
+                }
+            });
+        }
+        pagesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Prefs.setPageView(EditorActivity.this, true);
+                applyAppearance();
+            }
+        });
+        scrollButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Prefs.setPageView(EditorActivity.this, false);
+                applyAppearance();
+            }
+        });
     }
 
     private void applyAppearance() {
         String font = Prefs.font(this);
         float size = Prefs.textSize(this);
+        float spacing = Prefs.lineSpacing(this);
+        boolean paged = Prefs.pageView(this);
         body.setTypeface(Fonts.load(font));
         body.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+        body.setLineSpacingFactor(spacing);
+        body.setPaged(paged);
+        // In page view the pages sit on a darker "desk", with a little of it showing at the edges.
+        scroll.setBackgroundColor(paged ? getResources().getColor(R.color.desk) : 0);
+        int edge = paged ? Math.round(8 * getResources().getDisplayMetrics().density) : 0;
+        scroll.setPadding(edge, edge, edge, edge);
+        int closest = 0;
+        for (int i = 0; i < spacingButtons.length; i++) {
+            if (Math.abs(Prefs.LINE_SPACINGS[i] - spacing) < Math.abs(Prefs.LINE_SPACINGS[closest] - spacing)) {
+                closest = i;
+            }
+        }
+        for (int i = 0; i < spacingButtons.length; i++) {
+            markChosen(spacingButtons[i], i == closest);
+        }
+        markChosen(pagesButton, paged);
+        markChosen(scrollButton, !paged);
+        updateFooter();
         sizeLabel.setText(String.valueOf(Math.round(size)));
         typefaceButton.setText(Fonts.nameOf(this, font) + " ▾");
         typefaceButton.setTypeface(Fonts.load(font));
+    }
+
+    private void markChosen(TextView option, boolean chosen) {
+        option.setTextColor(getResources().getColor(chosen ? R.color.accent : R.color.ink_soft));
+        int flags = option.getPaintFlags();
+        option.setPaintFlags(chosen ? flags | Paint.UNDERLINE_TEXT_FLAG : flags & ~Paint.UNDERLINE_TEXT_FLAG);
     }
 
     private void changeTextSize(int deltaSp) {
@@ -219,9 +289,27 @@ public class EditorActivity extends Activity {
                 .show();
     }
 
-    private void updateFooter() {
+    private void updateWordCount() {
         int words = NoteStore.wordCount(body.getText().toString());
-        footer.setText("— " + words + (words == 1 ? " word" : " words") + " —");
+        wordCount = getResources().getQuantityString(R.plurals.word_count, words, words);
+        updateFooter();
+        // The page count is only known once the new text has been laid out.
+        footer.post(new Runnable() {
+            @Override
+            public void run() {
+                updateFooter();
+            }
+        });
+    }
+
+    /** "— 812 words —", or in page view "Page 2 of 5 · 812 words" for the page in view. */
+    private void updateFooter() {
+        if (body.isPaged()) {
+            int y = scroll.getScrollY() - body.getTop() + scroll.getHeight() / 3;
+            footer.setText(getString(R.string.footer_paged, body.pageAt(y), body.pageCount(), wordCount));
+        } else {
+            footer.setText(getString(R.string.footer_plain, wordCount));
+        }
     }
 
     private void updateDate(long millis) {

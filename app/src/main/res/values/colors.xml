@@ -10,7 +10,4 @@
     <color name="rule">#D8C8A6</color>
     <color name="pressed">#1F8B6F47</color>
     <color name="selection">#4D8B3A2B</color>
-    <!-- Page view: the "desk" between pages and the shadow under each page. -->
-    <color name="desk">#DCCFB2</color>
-    <color name="page_shadow">#335A4630</color>
 </resources>

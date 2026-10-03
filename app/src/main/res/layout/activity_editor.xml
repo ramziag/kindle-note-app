@@ -43,124 +43,57 @@
             android:text="@string/delete" />
     </LinearLayout>
 
-    <!-- Text size, typeface, line spacing and page view, shown by the "Aa" button. -->
+    <!-- Typeface and text size controls, shown by the "Aa" button. -->
     <LinearLayout
         android:id="@+id/appearance_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/appearance_panel"
-        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:visibility="gone">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/smaller"
+            style="@style/TopBarButton"
+            android:contentDescription="@string/smaller_text"
+            android:text="A−"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/size_label"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:gravity="center"
+            android:minWidth="36dp"
+            android:textColor="@color/ink_soft"
+            android:textSize="16sp"
+            android:typeface="serif" />
 
-            <TextView
-                android:id="@+id/smaller"
-                style="@style/TopBarButton"
-                android:contentDescription="@string/smaller_text"
-                android:text="A−"
-                android:textSize="16sp" />
+        <TextView
+            android:id="@+id/larger"
+            style="@style/TopBarButton"
+            android:contentDescription="@string/larger_text"
+            android:text="A+"
+            android:textSize="24sp" />
 
-            <TextView
-                android:id="@+id/size_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:minWidth="36dp"
-                android:textColor="@color/ink_soft"
-                android:textSize="16sp"
-                android:typeface="serif" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="28dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@color/rule" />
 
-            <TextView
-                android:id="@+id/larger"
-                style="@style/TopBarButton"
-                android:contentDescription="@string/larger_text"
-                android:text="A+"
-                android:textSize="24sp" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="28dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="@color/rule" />
-
-            <TextView
-                android:id="@+id/typeface"
-                style="@style/TopBarButton"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:textColor="@color/ink" />
-        </LinearLayout>
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="14dp"
-                    android:paddingRight="4dp"
-                    android:text="@string/spacing_label"
-                    android:textColor="@color/ink_faint"
-                    android:textSize="14sp"
-                    android:textStyle="italic"
-                    android:typeface="serif" />
-
-                <TextView
-                    android:id="@+id/spacing_compact"
-                    style="@style/Segment"
-                    android:text="@string/spacing_compact" />
-
-                <TextView
-                    android:id="@+id/spacing_normal"
-                    style="@style/Segment"
-                    android:text="@string/spacing_normal" />
-
-                <TextView
-                    android:id="@+id/spacing_relaxed"
-                    style="@style/Segment"
-                    android:text="@string/spacing_relaxed" />
-
-                <TextView
-                    android:id="@+id/spacing_wide"
-                    style="@style/Segment"
-                    android:text="@string/spacing_wide" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="28dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:background="@color/rule" />
-
-                <TextView
-                    android:id="@+id/view_pages"
-                    style="@style/Segment"
-                    android:text="@string/view_pages" />
-
-                <TextView
-                    android:id="@+id/view_scroll"
-                    style="@style/Segment"
-                    android:text="@string/view_scroll" />
-            </LinearLayout>
-        </HorizontalScrollView>
+        <TextView
+            android:id="@+id/typeface"
+            style="@style/TopBarButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/ink" />
     </LinearLayout>
 
     <ScrollView
@@ -168,11 +101,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:clipToPadding="false"
         android:fillViewport="true">
 
-        <!-- Line spacing, the title and page view are applied in code. -->
-        <com.papernotes.PagedEditText
+        <EditText
             android:id="@+id/body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -180,12 +111,12 @@
             android:gravity="top|left"
             android:hint="@string/write_hint"
             android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
+            android:lineSpacingMultiplier="1.45"
             android:paddingBottom="48dp"
             android:paddingLeft="@dimen/page_margin_wide"
             android:paddingRight="@dimen/page_margin_wide"
             android:paddingTop="12dp"
             android:textColor="@color/ink"
-            android:textCursorDrawable="@drawable/cursor_clear"
             android:textSize="@dimen/body_text"
             android:typeface="serif" />
     </ScrollView>

@@ -3,15 +3,18 @@ package com.papernotes;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-/** The reader's chosen typeface and text size, remembered between sessions. */
+/** The writer's chosen typeface, text size and line spacing, remembered between sessions. */
 final class Prefs {
 
     static final float MIN_TEXT_SIZE = 12f;
     static final float MAX_TEXT_SIZE = 40f;
+    /** Compact, normal, relaxed and wide line spacing, as multiples of the font's line height. */
+    static final float[] LINE_SPACINGS = {1.15f, 1.45f, 1.75f, 2.05f};
 
     private static final String FILE = "settings";
     private static final String KEY_FONT = "font";
     private static final String KEY_TEXT_SIZE = "text_size_sp";
+    private static final String KEY_LINE_SPACING = "line_spacing";
 
     private Prefs() {}
 
@@ -33,6 +36,14 @@ final class Prefs {
     static void setTextSize(Context context, float sp) {
         float clamped = Math.max(MIN_TEXT_SIZE, Math.min(MAX_TEXT_SIZE, sp));
         prefs(context).edit().putFloat(KEY_TEXT_SIZE, clamped).apply();
+    }
+
+    static float lineSpacing(Context context) {
+        return prefs(context).getFloat(KEY_LINE_SPACING, LINE_SPACINGS[1]);
+    }
+
+    static void setLineSpacing(Context context, float spacing) {
+        prefs(context).edit().putFloat(KEY_LINE_SPACING, spacing).apply();
     }
 
     private static SharedPreferences prefs(Context context) {

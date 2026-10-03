@@ -3,6 +3,7 @@ package com.papernotes;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,6 +30,8 @@ public class EditorActivity extends Activity {
     private View appearancePanel;
     private TextView sizeLabel;
     private TextView typefaceButton;
+    private TextView[] spacingButtons;
+    private TitleStyle titleStyle;
     private String savedText = "";
     private boolean deleted;
 
@@ -44,6 +47,11 @@ public class EditorActivity extends Activity {
         appearancePanel = findViewById(R.id.appearance_panel);
         sizeLabel = (TextView) findViewById(R.id.size_label);
         typefaceButton = (TextView) findViewById(R.id.typeface);
+        spacingButtons = new TextView[] {
+            (TextView) findViewById(R.id.spacing_compact), (TextView) findViewById(R.id.spacing_normal),
+            (TextView) findViewById(R.id.spacing_relaxed), (TextView) findViewById(R.id.spacing_wide),
+        };
+        titleStyle = new TitleStyle(Math.round(12 * getResources().getDisplayMetrics().density));
         applyAppearance();
 
         if (file.exists()) {
@@ -54,6 +62,7 @@ public class EditorActivity extends Activity {
             }
         }
         body.setText(savedText);
+        titleStyle.apply(body.getText());
         updateFooter();
         updateDate(file.exists() ? file.lastModified() : System.currentTimeMillis());
 
@@ -73,6 +82,7 @@ public class EditorActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                titleStyle.apply(s);
                 updateFooter();
             }
         });
@@ -116,6 +126,16 @@ public class EditorActivity extends Activity {
                 showTypefacePicker();
             }
         });
+        for (int i = 0; i < spacingButtons.length; i++) {
+            final float spacing = Prefs.LINE_SPACINGS[i];
+            spacingButtons[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Prefs.setLineSpacing(EditorActivity.this, spacing);
+                    applyAppearance();
+                }
+            });
+        }
     }
 
     private void applyAppearance() {
@@ -123,9 +143,26 @@ public class EditorActivity extends Activity {
         float size = Prefs.textSize(this);
         body.setTypeface(Fonts.load(font));
         body.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+        float spacing = Prefs.lineSpacing(this);
+        body.setLineSpacing(0, spacing);
+        int closest = 0;
+        for (int i = 0; i < spacingButtons.length; i++) {
+            if (Math.abs(Prefs.LINE_SPACINGS[i] - spacing) < Math.abs(Prefs.LINE_SPACINGS[closest] - spacing)) {
+                closest = i;
+            }
+        }
+        for (int i = 0; i < spacingButtons.length; i++) {
+            markChosen(spacingButtons[i], i == closest);
+        }
         sizeLabel.setText(String.valueOf(Math.round(size)));
         typefaceButton.setText(Fonts.nameOf(this, font) + " ▾");
         typefaceButton.setTypeface(Fonts.load(font));
+    }
+
+    private void markChosen(TextView option, boolean chosen) {
+        option.setTextColor(getResources().getColor(chosen ? R.color.accent : R.color.ink_soft));
+        int flags = option.getPaintFlags();
+        option.setPaintFlags(chosen ? flags | Paint.UNDERLINE_TEXT_FLAG : flags & ~Paint.UNDERLINE_TEXT_FLAG);
     }
 
     private void changeTextSize(int deltaSp) {

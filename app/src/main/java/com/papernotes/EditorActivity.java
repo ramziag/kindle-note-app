@@ -31,7 +31,6 @@ public class EditorActivity extends Activity {
     private TextView sizeLabel;
     private TextView typefaceButton;
     private TextView[] spacingButtons;
-    private TitleStyle titleStyle;
     private String savedText = "";
     private boolean deleted;
 
@@ -51,7 +50,6 @@ public class EditorActivity extends Activity {
             (TextView) findViewById(R.id.spacing_compact), (TextView) findViewById(R.id.spacing_normal),
             (TextView) findViewById(R.id.spacing_relaxed), (TextView) findViewById(R.id.spacing_wide),
         };
-        titleStyle = new TitleStyle(Math.round(12 * getResources().getDisplayMetrics().density));
         applyAppearance();
 
         if (file.exists()) {
@@ -62,7 +60,6 @@ public class EditorActivity extends Activity {
             }
         }
         body.setText(savedText);
-        titleStyle.apply(body.getText());
         updateFooter();
         updateDate(file.exists() ? file.lastModified() : System.currentTimeMillis());
 
@@ -82,7 +79,6 @@ public class EditorActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                titleStyle.apply(s);
                 updateFooter();
             }
         });

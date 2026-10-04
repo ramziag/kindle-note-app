@@ -8,7 +8,7 @@
     <string name="empty_notebook">This notebook is empty.\n\nTap “+ New note” to begin a page here, or long-press a note elsewhere and choose “Move to…”.</string>
     <string name="back_to">‹ %1$s</string>
     <string name="delete">Delete</string>
-    <string name="write_hint">Title first, then begin writing…</string>
+    <string name="write_hint">Begin writing…</string>
     <string name="delete_title">Delete this note?</string>
     <string name="delete_message">“%1$s” will be removed from your device.</string>
     <string name="cancel">Cancel</string>

@@ -16,8 +16,7 @@ is saved as a plain `.txt` file on the device.
   from a computer, and notebooks can hold notebooks of their own.
 - Long-press a note to **move** it to another notebook (or straight into a new
   one) or delete it; long-press a notebook to rename or delete it
-- The first line of a note is its title: set larger and centred in the note,
-  like a chapter heading, and shown above a preview in the lists
+- The first line of a note is its title; the list shows the title, a preview, and when you last edited it
 - A running word count at the foot of the page
 - **Aa** button in the editor: make the text bigger or smaller, pick any
   typeface installed on the Kindle, and choose the line spacing (Compact,
@@ -69,7 +68,6 @@ straight over the old one.
 app/src/main/java/com/papernotes/
   MainActivity.java    a folder's notebooks and notes
   EditorActivity.java  the writing page
-  TitleStyle.java      the chapter-heading look of a note's first line
   ChoiceDialog.java    the typeface and "Move to" pickers
   NoteStore.java       reading and writing the .txt files
   Fonts.java           finding the typefaces installed on the device

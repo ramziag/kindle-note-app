@@ -11,8 +11,8 @@ android {
         // Kindle Fire HDX (3rd gen) runs Fire OS 3.x, based on Android 4.2.2 (API 17).
         minSdk 17
         targetSdk 34
-        versionCode 6
-        versionName '1.5'
+        versionCode 7
+        versionName '1.6'
     }
 
     signingConfigs {

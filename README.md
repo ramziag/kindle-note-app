@@ -68,6 +68,7 @@ straight over the old one.
 app/src/main/java/com/papernotes/
   MainActivity.java    a folder's notebooks and notes
   EditorActivity.java  the writing page
+  WritingEditText.java the text box, with a cursor sized to the letters
   ChoiceDialog.java    the typeface and "Move to" pickers
   NoteStore.java       reading and writing the .txt files
   Fonts.java           finding the typefaces installed on the device
